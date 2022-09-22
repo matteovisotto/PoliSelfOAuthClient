@@ -70,7 +70,7 @@ class PoliSelfOAuthLoginViewController: UIViewController, WKNavigationDelegate {
         webView.leftAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leftAnchor).isActive = true
         webView.rightAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.rightAnchor).isActive = true
         webView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-        if(self.inNavigationController){
+        if(!self.inNavigationController){
             webView.topAnchor.constraint(equalTo: self.navigationBar.bottomAnchor).isActive = true
         } else {
             webView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor).isActive = true
