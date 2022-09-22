@@ -7,9 +7,9 @@
 
 import Foundation
 
-class PoliSelfService {
+public class PoliSelfService {
     
-    enum Service: String {
+    public enum Service: String {
         case webeep = "2270"
         case recman = "2314"
         case carriera = "2161"
@@ -20,7 +20,7 @@ class PoliSelfService {
         case iscrizioneEsami = "1918"
     }
     
-    public static func getResponseType(from stringURL: String) -> PoliServiceOAuthLogin.AuthResponse {
+    static func getResponseType(from stringURL: String) -> PoliServiceOAuthLogin.AuthResponse {
         if(stringURL.starts(with: "https://shibidp.polimi.it")){
             return .shibboleth
         } else if (stringURL.starts(with: "https://aunicalogin.polimi.it") && !stringURL.starts(with: "https://aunicalogin.polimi.it/aunicalogin/aunicalogin/controller/logout/SessioneTerminata.do")) {
@@ -31,7 +31,7 @@ class PoliSelfService {
         return .unknown
     }
     
-    public static func selectAuthStep(url: URL, htmlContent: String, completionHandler: @escaping (_ result: Bool, _ url: URL?, _ htmlString: String?)->()) {
+    static func selectAuthStep(url: URL, htmlContent: String, completionHandler: @escaping (_ result: Bool, _ url: URL?, _ htmlString: String?)->()) {
         switch getResponseType(from: url.absoluteString) {
             case .aunicalogin:
                 let aunicaManager = AunicaloginTicketManager(htmlContent: htmlContent)

@@ -1,9 +1,9 @@
 import Foundation
 import UIKit
 
-class PoliSelfOAuthClient {
+public class PoliSelfOAuthClient {
     
-    enum AccountStatus: String {
+    public enum AccountStatus: String {
         case UNLOGGED = "Non autenticato"
         case TOKEN_VALID = "Token valido"
         case TOKEN_NOT_VALID = "Token scaduto"
