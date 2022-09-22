@@ -62,6 +62,11 @@ public class PoliSelfOAuthClient {
         PoliSelfOAuthClientStatusManager.registerForStatus(statusManagerDelegate: observer)
     }
     
+    public func logout() -> Void {
+        PoliSelfOAuthClientSharedPreferencesManager.deletePreferences()
+        PoliSelfOAuthClientStatusManager.notifyStatusUpdate(status: .UNLOGGED)
+    }
+    
 }
 
 extension PoliSelfOAuthClient: PoliSelfOAuthClientStatusManagerDelegate {
