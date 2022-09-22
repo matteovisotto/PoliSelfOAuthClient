@@ -10,7 +10,7 @@ The package has to be initialized into AppDelegate into application didFinishLau
 PoliSelfOAuthClient.shared.initialize()
 ```
 This is needed to initialize the package and also to perform OAuth token refresh automatically if a user is alredy logged in
-In order to receive update on authentication status you can implement PoliSelfOAuthClientTaskManagerDelegate, for example
+In order to receive update on authentication status you can implement PoliSelfOAuthClientStatusManagerDelegate, for example
 ```
 class MyClass {
   init(){
@@ -19,13 +19,13 @@ class MyClass {
 
 }
 
-extension MyClass: PoliSelfOAuthClientTaskManagerDelegate {
+extension MyClass: PoliSelfOAuthClientStatusManagerDelegate {
   public func onStatusUpdate(appStatus: AccountStatus) {
         // Your status management here
     }
 }
 ```
-The login view with PoliMi is already embedded into the package, lo start a new login use:
+The login view with PoliMi is already embedded into the package, to start a new login use:
 ```
 PoliSelfOAuthClient.shared.poliSelfLogin { result in
     //result:Bool true if successfully authenticated
