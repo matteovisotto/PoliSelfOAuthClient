@@ -67,7 +67,7 @@ public class PoliSelfOAuthClient {
         PoliSelfOAuthClientStatusManager.notifyStatusUpdate(status: .UNLOGGED)
     }
     
-    public func getPoliCookie() -> [HTTPCookie]? {
+    public func getPoliCookies() -> [HTTPCookie]? {
         if !statusManager.isSessionReconstructed {
             return nil
         }
