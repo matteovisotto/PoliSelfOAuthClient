@@ -1,6 +1,7 @@
 # PoliSelfOAuthClient
 
-Package to connect into PoliMi Online Services using university OAuth IdP and get pages HTML ready from scraping.
+Package to connect into PoliMi Online Services using university OAuth IdP and get pages HTML ready from scraping.<br/>
+The package manages login and logout procedures, saves tokens and perform auto refresh of token when needed<br/>
 Note: Scraping library is alredy included in the package (SwiftSoup: https://github.com/scinfu/SwiftSoup)
 
 ## Usage
