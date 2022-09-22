@@ -15,9 +15,18 @@ public protocol PoliSelfOAuthClientStatusManagerDelegate {
 
 class PoliSelfOAuthClientStatusManager {
     public static var isUrl: Bool = false
-    public static var pin: String = ""
     private static var observers: [PoliSelfOAuthClientStatusManagerDelegate] = []
     private static var currentStatus: PoliSelfOAuthClient.AccountStatus = .UNLOGGED
+    
+    public static let shared: PoliSelfOAuthClientStatusManager = PoliSelfOAuthClientStatusManager()
+    
+    private var lastSession: Date = Calendar.current.date(byAdding: .hour, value: -2, to: Date()) ?? Date()
+    
+    public var isSessionReconstructed: Bool {
+        get {
+            return lastSession >= Calendar.current.date(byAdding: .hour, value: -1, to: Date()) ?? Date()
+        }
+    }
     
     public static func registerForStatus(statusManagerDelegate: PoliSelfOAuthClientStatusManagerDelegate){
         self.observers.append(statusManagerDelegate)
@@ -64,6 +73,10 @@ class PoliSelfOAuthClientStatusManager {
         let task = PoliSelfOAuthClientTaskManager(url: URL(string: PoliSelfOAuthClientConst.TOKEN_SERVER)!, parameters: parameters)
         task.delegate = self
         task.execute()
+    }
+    
+    public func updateLastSession() -> Void {
+        self.lastSession = Date()
     }
     
 }

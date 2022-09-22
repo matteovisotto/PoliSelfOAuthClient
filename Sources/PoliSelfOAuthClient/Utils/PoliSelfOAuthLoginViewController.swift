@@ -88,7 +88,7 @@ class PoliSelfOAuthLoginViewController: UIViewController, WKNavigationDelegate {
             webView.evaluateJavaScript("document.getElementsByTagName('input')[0].value",
                                        completionHandler: { (content: Any?, error: Error?) in
                 if let auth_token = content as? String {
-                    let statusManager = PoliSelfOAuthClientStatusManager()
+                    let statusManager = PoliSelfOAuthClientStatusManager.shared
                     statusManager.getAccessToken(usingAuthToken: auth_token)
                     DispatchQueue.main.async {
                         self.dismiss(animated: true, completion: nil)

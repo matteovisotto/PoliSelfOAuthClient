@@ -107,8 +107,45 @@ public class PoliSelfService {
     }
     
     private func getPoliService(completionHandler: @escaping (_ result: Bool, _ url: URL?, _ htmlString: String?) -> ()) {
-        let urlString = "https://servizionline.polimi.it/portaleservizi/"
-        let poliSelfTask = URLSession.shared.dataTask(with: URLRequest(url: URL(string: urlString)!)) { data, response, error in
+        if (PoliSelfOAuthClientStatusManager.shared.isSessionReconstructed) {
+            self.serviceTask(completionHandler: completionHandler)
+        } else {
+            let urlString = "https://servizionline.polimi.it/portaleservizi/"
+            let poliSelfTask = URLSession.shared.dataTask(with: URLRequest(url: URL(string: urlString)!)) { data, response, error in
+                if let _ = error {
+                    completionHandler(false, nil, nil)
+                    return
+                }
+                
+                if let d = data {
+                    if let string = String(data: d, encoding: .utf8) {
+                        if let url = (response as! HTTPURLResponse).url {
+                            PoliSelfService.selectAuthStep(url: url, htmlContent: string) { result, url, htmString in
+                                if result {
+                                    if let u = url {
+                                        if u.absoluteString.starts(with: "https://servizionline.polimi.it/portaleservizi/portaleservizi/controller/Portale.do?jaf_currentWFID=main&EVN_SHOW_PORTALE=evento") {
+                                            PoliSelfOAuthClientStatusManager.shared.updateLastSession()
+                                            self.serviceTask(completionHandler: completionHandler)
+                                        }
+                                    }
+                                }
+                                completionHandler(false, nil, nil)
+                            }
+                            return
+                        }
+                    }
+                }
+                completionHandler(false, nil, nil)
+                return
+            }
+            poliSelfTask.resume()
+        }
+        
+    }
+    
+    private func serviceTask(completionHandler: @escaping (_ result: Bool, _ url: URL?, _ htmlString: String?) -> ()) {
+        let urlString = self.POLISELF_SERVICE_BASE_URL + self.service.rawValue
+        let poliServizioTask = URLSession.shared.dataTask(with: URLRequest(url: URL(string: urlString)!)) { data, response, error in
             if let _ = error {
                 completionHandler(false, nil, nil)
                 return
@@ -117,35 +154,7 @@ public class PoliSelfService {
             if let d = data {
                 if let string = String(data: d, encoding: .utf8) {
                     if let url = (response as! HTTPURLResponse).url {
-                        PoliSelfService.selectAuthStep(url: url, htmlContent: string) { result, url, htmString in
-                            if result {
-                                if let u = url {
-                                    if u.absoluteString.starts(with: "https://servizionline.polimi.it/portaleservizi/portaleservizi/controller/Portale.do?jaf_currentWFID=main&EVN_SHOW_PORTALE=evento") {
-                                        let urlString = self.POLISELF_SERVICE_BASE_URL + self.service.rawValue
-                                        let poliServizioTask = URLSession.shared.dataTask(with: URLRequest(url: URL(string: urlString)!)) { data, response, error in
-                                            if let _ = error {
-                                                completionHandler(false, nil, nil)
-                                                return
-                                            }
-                                            
-                                            if let d = data {
-                                                if let string = String(data: d, encoding: .utf8) {
-                                                    if let url = (response as! HTTPURLResponse).url {
-                                                        PoliSelfService.selectAuthStep(url: url, htmlContent: string, completionHandler: completionHandler)
-                                                        return
-                                                    }
-                                                }
-                                            }
-                                            completionHandler(false, nil, nil)
-                                            return
-                                        }
-                                        poliServizioTask.resume()
-                                        return
-                                    }
-                                }
-                            }
-                            completionHandler(false, nil, nil)
-                        }
+                        PoliSelfService.selectAuthStep(url: url, htmlContent: string, completionHandler: completionHandler)
                         return
                     }
                 }
@@ -153,9 +162,8 @@ public class PoliSelfService {
             completionHandler(false, nil, nil)
             return
         }
-        poliSelfTask.resume()
+        poliServizioTask.resume()
+        return
     }
-    
-    
     
 }

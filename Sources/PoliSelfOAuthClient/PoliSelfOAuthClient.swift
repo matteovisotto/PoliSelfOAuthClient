@@ -13,7 +13,7 @@ public class PoliSelfOAuthClient {
     
     private var currentStatus: PoliSelfOAuthClient.AccountStatus = .UNLOGGED
     
-    private var statusManager: PoliSelfOAuthClientStatusManager = PoliSelfOAuthClientStatusManager()
+    private var statusManager: PoliSelfOAuthClientStatusManager = PoliSelfOAuthClientStatusManager.shared
     
     public var accessToken: String? {
         get {
@@ -65,6 +65,14 @@ public class PoliSelfOAuthClient {
     public func logout() -> Void {
         PoliSelfOAuthClientSharedPreferencesManager.deletePreferences()
         PoliSelfOAuthClientStatusManager.notifyStatusUpdate(status: .UNLOGGED)
+    }
+    
+    public func getPoliCookie() -> [HTTPCookie]? {
+        if !statusManager.isSessionReconstructed {
+            return nil
+        }
+        let cookies = HTTPCookieStorage.shared.cookies ?? []
+        return cookies
     }
     
 }
