@@ -26,7 +26,7 @@ public class PoliSelfOAuthClient {
     }
     
     public func poliSelfLogin(completionHandler: @escaping (_ result: Bool)->()) -> Void {
-        let webLogin = PoliSelfOAuthLoginViewController(inNavigationController: true)
+        let webLogin = PoliSelfOAuthLoginViewController(inNavigationController: false)
         webLogin.onCompletion = completionHandler
         let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
         if var topController = keyWindow?.rootViewController {
