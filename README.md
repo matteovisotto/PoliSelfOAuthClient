@@ -55,4 +55,20 @@ func registerForStatusUpdate(_ observer: PoliSelfOAuthClientStatusManagerDelegat
 func poliSelfLogin(completionHandler: @escaping (_ result: Bool)->()) -> Void
 func logout() -> Void
 func getServicePage(service: PoliSelfService.Service, completionHandler: @escaping (_ result: Bool, _ url: URL?, _ htmlString: String?)->()) -> Void
+func reconstructPoliSession(completionHandler: @escaping (_ result: Bool, _ cookies: [HTTPCookie]?)->()) -> Void
+func getPoliCookies() -> [HTTPCookie]?
+```
+
+## Cookie management
+Once the PoliMi Online Service session has been reconstructed from the OAuth provider the session cookies can be extracted. If you are using package function this operation is not needed bacuse it is managed from the package itself. If, instead, you need to load the HTML on a WebView or you need to load directly a service on a WebView you may need to inject cookies to keep the user authenticated. At this scope you can get all cookies from PoliSelfOAuthClient as follow:
+```
+PoliSelfOAuthClient.shared.getPoliCookies()
+```
+Remember that the returned value is an optional, so you have to check if cookies are available or not.
+<br/>
+If the function returns nil, you can rebuilt the session using:
+```
+PoliSelfOAuthClient.shared.reconstructPoliSession { result, cookies in
+  
+}
 ```
