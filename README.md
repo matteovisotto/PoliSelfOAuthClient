@@ -40,7 +40,7 @@ Finally, to get the HTML content from a poliSelf page use the following function
 PoliSelfOAuthClient.shared.getServicePage(service: .carriera) { result, url, htmlString in
   // result: Bool -> True if completed successfully
   // url: URL? -> Optional value, contains the url of the page when result is success
-  // htmlString: String -> Optional value, contain the HTML code of the page ready from scrape or it can be loaded into a webView.
+  // htmlString: String -> Optional value, contains the HTML code of the page ready for scraping (or load into a WebView).
 }
 ```
 
