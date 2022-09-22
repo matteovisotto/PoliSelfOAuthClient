@@ -75,6 +75,20 @@ public class PoliSelfOAuthClient {
         return cookies
     }
     
+    public func reconstructPoliSession(completionHandler: @escaping (_ result: Bool, _ cookies: [HTTPCookie]?)->()) -> Void {
+        if(self.currentStatus == .TOKEN_VALID){
+            guard let accessToken = self.accessToken else {completionHandler(false, nil); return}
+            let poliSelf = PoliSelfService(service: .carriera, accessToken: accessToken)
+            poliSelf.reconstructSession { result in
+                if result {
+                    completionHandler(true, self.getPoliCookies())
+                } else {
+                    completionHandler(false, nil)
+                }
+            }
+        }
+    }
+    
 }
 
 extension PoliSelfOAuthClient: PoliSelfOAuthClientStatusManagerDelegate {

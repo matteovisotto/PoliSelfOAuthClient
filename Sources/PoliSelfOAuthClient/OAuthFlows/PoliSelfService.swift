@@ -94,27 +94,37 @@ public class PoliSelfService {
             if (PoliSelfOAuthClientStatusManager.shared.isSessionReconstructed) {
                 self.serviceTask(completionHandler: completionHandler)
             } else {
-                let webeep = PoliServiceOAuthLogin(serviceId: PoliSelfService.Service.webeep.rawValue, accessToken: self.accessToken)
-                webeep.executeFlow { result, url, htmlString in
-                    if(result){
-                        if let u = url {
-                            if u.absoluteString.starts(with: "https://webeep.polimi.it"){
-                                self.getPoliService(completionHandler: completionHandler)
-                                return
-                            }
-                        }
+                reconstructSession { result in
+                    if result {
+                        self.serviceTask(completionHandler: completionHandler)
+                    } else {
+                        completionHandler(false, nil, nil)
                     }
-                    completionHandler(false, nil, nil)
                 }
             }
         }
     }
     
-    private func getPoliService(completionHandler: @escaping (_ result: Bool, _ url: URL?, _ htmlString: String?) -> ()) {
+    public func reconstructSession(completionHandler: @escaping (_ result: Bool)->()) -> Void {
+        let webeep = PoliServiceOAuthLogin(serviceId: PoliSelfService.Service.webeep.rawValue, accessToken: self.accessToken)
+        webeep.executeFlow { result, url, htmlString in
+            if(result){
+                if let u = url {
+                    if u.absoluteString.starts(with: "https://webeep.polimi.it"){
+                        self.getPoliService(completionHandler: completionHandler)
+                        return
+                    }
+                }
+            }
+            completionHandler(false)
+        }
+    }
+    
+    private func getPoliService(completionHandler: @escaping (_ result: Bool) -> ()) {
             let urlString = "https://servizionline.polimi.it/portaleservizi/"
             let poliSelfTask = URLSession.shared.dataTask(with: URLRequest(url: URL(string: urlString)!)) { data, response, error in
                 if let _ = error {
-                    completionHandler(false, nil, nil)
+                    completionHandler(false)
                     return
                 }
                 
@@ -126,18 +136,18 @@ public class PoliSelfService {
                                     if let u = url {
                                         if u.absoluteString.starts(with: "https://servizionline.polimi.it/portaleservizi/portaleservizi/controller/Portale.do?jaf_currentWFID=main&EVN_SHOW_PORTALE=evento") {
                                             PoliSelfOAuthClientStatusManager.shared.updateLastSession()
-                                            self.serviceTask(completionHandler: completionHandler)
+                                            completionHandler(true)
                                             return
                                         }
                                     }
                                 }
-                                completionHandler(false, nil, nil)
+                                completionHandler(false)
                             }
                             return
                         }
                     }
                 }
-                completionHandler(false, nil, nil)
+                completionHandler(false)
                 return
             }
             poliSelfTask.resume()
