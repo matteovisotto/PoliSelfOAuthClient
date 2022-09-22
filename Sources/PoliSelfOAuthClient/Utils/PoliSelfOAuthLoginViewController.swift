@@ -52,7 +52,7 @@ class PoliSelfOAuthLoginViewController: UIViewController, WKNavigationDelegate {
         navigationBar.rightAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.rightAnchor).isActive = true
         navigationBar.heightAnchor.constraint(equalToConstant: 50).isActive = true
 
-        let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: nil)
+        let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissVC))
 
         let navigationItem = UINavigationItem(title: NSLocalizedString("PoliMi Login", comment: ""))
         navigationItem.leftBarButtonItem = cancelButton
