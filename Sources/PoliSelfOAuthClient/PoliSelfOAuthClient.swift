@@ -15,13 +15,13 @@ public class PoliSelfOAuthClient {
     
     private var statusManager: PoliSelfOAuthClientStatusManager = PoliSelfOAuthClientStatusManager()
     
-    var accessToken: String? {
+    public var accessToken: String? {
         get {
             return PoliSelfOAuthClientSharedPreferencesManager.getAccessToken()
         }
     }
     
-    var isUserLogged: Bool {
+    public var isUserLogged: Bool {
         get {
             return self.currentStatus == .TOKEN_VALID
         }
