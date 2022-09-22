@@ -26,7 +26,30 @@ class PoliSelfOAuthClient {
     }
     
     public func poliSelfLogin(completionHandler: @escaping (_ result: Bool)->()) -> Void {
-        
+        let webLogin = PoliSelfOAuthLoginViewController(inNavigationController: true)
+        webLogin.onCompletion = completionHandler
+        let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+        if var topController = keyWindow?.rootViewController {
+            while let presentedViewController = topController.presentedViewController {
+                topController = presentedViewController
+            }
+            topController.present(webLogin, animated: true, completion: nil)
+        }
+        completionHandler(false)
+    }
+    
+    public func getServicePage(service: PoliSelfService.Service, completionHandler: @escaping (_ result: Bool, _ url: URL?, _ htmlString: String?)->()) {
+        if(self.currentStatus == .TOKEN_VALID){
+            guard let accessToken = self.accessToken else {completionHandler(false, nil, nil); return}
+            let poliService = PoliSelfService(service: service, accessToken: accessToken)
+            poliService.getServicePage(completionHandler: completionHandler)
+        } else {
+            completionHandler(false, nil, nil)
+        }
+    }
+    
+    public func initialize() -> Void {
+        self.statusManager.updateAppToken()
     }
     
 }
