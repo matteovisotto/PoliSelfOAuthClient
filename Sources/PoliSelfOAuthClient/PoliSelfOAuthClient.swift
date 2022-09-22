@@ -21,6 +21,12 @@ public class PoliSelfOAuthClient {
         }
     }
     
+    var isUserLogged: Bool {
+        get {
+            return self.currentStatus == .TOKEN_VALID
+        }
+    }
+    
     init(){
         PoliSelfOAuthClientStatusManager.registerForStatus(statusManagerDelegate: self)
     }
@@ -52,10 +58,14 @@ public class PoliSelfOAuthClient {
         self.statusManager.updateAppToken()
     }
     
+    public func registerForStatusUpdate(_ observer: PoliSelfOAuthClientStatusManagerDelegate) -> Void {
+        PoliSelfOAuthClientStatusManager.registerForStatus(statusManagerDelegate: observer)
+    }
+    
 }
 
 extension PoliSelfOAuthClient: PoliSelfOAuthClientStatusManagerDelegate {
-    func onStatusUpdate(appStatus: AccountStatus) {
+    public func onStatusUpdate(appStatus: AccountStatus) {
         self.currentStatus = appStatus
     }
 }

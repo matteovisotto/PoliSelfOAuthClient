@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-protocol PoliSelfOAuthClientStatusManagerDelegate {
+public protocol PoliSelfOAuthClientStatusManagerDelegate {
     func onStatusUpdate(appStatus: PoliSelfOAuthClient.AccountStatus)
 }
 
