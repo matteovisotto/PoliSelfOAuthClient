@@ -75,11 +75,11 @@ public class PoliSelfOAuthClient {
     
     public func getRestService(restEndpointUrl: String, completionHandler: @escaping (_ result: Bool, _ jsonString: String?) -> () ) -> Void {
         if(self.currentRestStatus == .TOKEN_VALID){
-            guard let accessToken = self.restAccessToken else {completionHandler(false, nil); return}
+            guard let accessToken = self.restAccessToken else {completionHandler(false, "No access token"); return}
             let restService = PoliSelfRestService(restEndpoint: restEndpointUrl, accessToken: accessToken)
             restService.getJson(completionHandler: completionHandler)
         } else {
-            completionHandler(false, nil)
+            completionHandler(false, "no token valid")
         }
     }
     
