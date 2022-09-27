@@ -14,7 +14,12 @@ public class PoliSelfOAuthClient {
     private var isRestEnabled: Bool = false
     
     private var currentStatus: PoliSelfOAuthClient.AccountStatus = .UNLOGGED
-    private var currentRestStatus: PoliSelfOAuthClient.AccountStatus = .UNLOGGED
+    private var currentRestStatus: PoliSelfOAuthClient.AccountStatus = .UNLOGGED {
+        didSet {
+            print("Set rest status to: " + currentRestStatus.rawValue)
+        }
+    }
+    
     
     private var statusManager: PoliSelfOAuthClientStatusManager = PoliSelfOAuthClientStatusManager.shared
     private var restStatusManager: PoliSelfOAuthClientRestStatusManager = PoliSelfOAuthClientRestStatusManager.shared
