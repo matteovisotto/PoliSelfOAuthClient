@@ -88,7 +88,7 @@ public class PoliSelfOAuthClient {
         }
     }
     
-    public func initialize(useRestService: Bool = false) -> Void {
+    public func initialize(useRestService: Bool = true) -> Void {
         self.isRestEnabled = useRestService
         self.statusManager.updateAppToken()
         if useRestService {
