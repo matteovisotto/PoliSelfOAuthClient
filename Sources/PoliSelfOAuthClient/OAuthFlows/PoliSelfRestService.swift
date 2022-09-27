@@ -64,12 +64,13 @@ class PoliSelfRestService {
         var request = URLRequest(url: URL(string: self.restUrl)!)
         request.setValue( "Bearer " + self.aToken, forHTTPHeaderField: "Authorization")
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            print((response as! HTTPURLResponse).allHeaderFields)
             if let _ = error {
-                completionHandler(false, nil)
+                completionHandler(false, "Error")
                 return
             }
-            guard let data = data else {completionHandler(false, nil); return}
-            guard let s = String(data: data, encoding: .utf8) else {completionHandler(false, nil); return}
+            guard let data = data else {completionHandler(false, "Not Data"); return}
+            guard let s = String(data: data, encoding: .utf8) else {completionHandler(false, "Not convertible"); return}
             completionHandler(true, s)
         }
         task.resume()
