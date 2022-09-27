@@ -11,7 +11,13 @@ public class PoliSelfOAuthClient {
     
     public static let shared: PoliSelfOAuthClient = PoliSelfOAuthClient()
     
-    private var isRestEnabled: Bool = false
+    private var isRestEnabled: Bool = false {
+        didSet {
+            if isRestEnabled {
+                PoliSelfOAuthClientRestStatusManager.registerForStatus(statusManagerDelegate: self)
+            }
+        }
+    }
     
     private var currentStatus: PoliSelfOAuthClient.AccountStatus = .UNLOGGED
     private var currentRestStatus: PoliSelfOAuthClient.AccountStatus = .UNLOGGED {
@@ -50,9 +56,6 @@ public class PoliSelfOAuthClient {
     
     init(){
         PoliSelfOAuthClientStatusManager.registerForStatus(statusManagerDelegate: self)
-        if(isRestEnabled){
-            PoliSelfOAuthClientRestStatusManager.registerForStatus(statusManagerDelegate: self)
-        }
     }
     
     public func poliSelfLogin(completionHandler: @escaping (_ result: Bool)->()) -> Void {
