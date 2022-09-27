@@ -70,7 +70,7 @@ public class PoliSelfOAuthClient {
             }
             topController.present(webLogin, animated: true, completion: nil)
         }
-        completionHandler(false)
+        //completionHandler(false)
     }
     
     public func getServicePage(service: PoliSelfService.Service, completionHandler: @escaping (_ result: Bool, _ url: URL?, _ htmlString: String?)->()) {
