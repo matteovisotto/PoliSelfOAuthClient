@@ -52,17 +52,7 @@ public class PoliSelfOAuthClient {
     
     public func poliSelfLogin(completionHandler: @escaping (_ result: Bool)->()) -> Void {
         let webLogin = PoliSelfOAuthLoginViewController(inNavigationController: false)
-        webLogin.onCompletion = { result in
-            if result {
-                if self.isRestEnabled {
-                    self.restStatusManager.loginIntoRestService()
-                }
-            }
-            DispatchQueue.main.async {
-                completionHandler(result)
-            }
-            
-        }
+        webLogin.onCompletion = completionHandler
         let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
         if var topController = keyWindow?.rootViewController {
             while let presentedViewController = topController.presentedViewController {
@@ -144,6 +134,9 @@ public class PoliSelfOAuthClient {
 extension PoliSelfOAuthClient: PoliSelfOAuthClientStatusManagerDelegate {
     public func onStatusUpdate(appStatus: AccountStatus) {
         self.currentStatus = appStatus
+        if appStatus == .TOKEN_VALID && self.isRestEnabled && !PoliSelfOAuthClientSharedPreferencesManager.isRestUserLogged(){
+            self.restStatusManager.loginIntoRestService()
+        }
     }
     
     public func onRestStatusUpdate(appStatus: AccountStatus) {
