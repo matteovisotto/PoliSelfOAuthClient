@@ -20,11 +20,7 @@ public class PoliSelfOAuthClient {
     }
     
     private var currentStatus: PoliSelfOAuthClient.AccountStatus = .UNLOGGED
-    private var currentRestStatus: PoliSelfOAuthClient.AccountStatus = .UNLOGGED {
-        didSet {
-            print("Set rest status to: " + currentRestStatus.rawValue)
-        }
-    }
+    private var currentRestStatus: PoliSelfOAuthClient.AccountStatus = .UNLOGGED
     
     
     private var statusManager: PoliSelfOAuthClientStatusManager = PoliSelfOAuthClientStatusManager.shared
@@ -83,11 +79,11 @@ public class PoliSelfOAuthClient {
     
     public func getRestService(restEndpointUrl: String, completionHandler: @escaping (_ result: Bool, _ jsonString: String?) -> () ) -> Void {
         if(self.currentRestStatus == .TOKEN_VALID){
-            guard let accessToken = self.restAccessToken else {completionHandler(false, "No access token"); return}
+            guard let accessToken = self.restAccessToken else {completionHandler(false, nil); return}
             let restService = PoliSelfRestService(restEndpoint: restEndpointUrl, accessToken: accessToken)
             restService.getJson(completionHandler: completionHandler)
         } else {
-            completionHandler(false, "no token valid")
+            completionHandler(false, nil)
         }
     }
     

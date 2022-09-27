@@ -25,6 +25,7 @@ class PoliSelfOAuthLoginViewController: UIViewController, WKNavigationDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = .white
         if(!self.inNavigationController){
             addNavigationBar()
         }

@@ -35,12 +35,10 @@ class AunicaloginSessionManager {
             let responseURL = (response as! HTTPURLResponse).url
             if let d = data {
                 if let str = String(data: d, encoding: .utf8) {
-                    print("UTF8")
                     completionHandler(true, responseURL, str)
                     return
                 }
                 if let str = String(data: d, encoding: .isoLatin2) {
-                    print("ISOLATIN1")
                     completionHandler(true, responseURL, str)
                     return
                 }
@@ -57,7 +55,7 @@ class AunicaloginSessionManager {
             let a: Element = try doc.select("a").last()!
             url = try a.attr("href")
         } catch {
-            print("error")
+            print("AunicaSession parsing error")
         }
        return url
     }

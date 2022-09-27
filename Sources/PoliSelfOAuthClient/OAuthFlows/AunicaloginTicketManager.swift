@@ -37,12 +37,10 @@ class AunicaloginTicketManager {
             let responseURL = (response as! HTTPURLResponse).url
             if let d = data {
                 if let str = String(data: d, encoding: .utf8) {
-                    print("UTF8")
                     completionHandler(true, responseURL, str)
                     return
                 }
                 if let str = String(data: d, encoding: .isoLatin2) {
-                    print("ISOLATIN1")
                     completionHandler(true, responseURL, str)
                     return
                 }
@@ -67,7 +65,7 @@ class AunicaloginTicketManager {
             }
             data.fields = scrapedData
         } catch {
-            print("error")
+            print("AunicaTiket parsing error")
         }
         if (data.postUrl.starts(with: "aunicalogin/controller")){
             data.postUrl = "https://aunicalogin.polimi.it/aunicalogin/"+data.postUrl
