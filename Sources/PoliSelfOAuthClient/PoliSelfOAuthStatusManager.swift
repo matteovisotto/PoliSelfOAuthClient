@@ -10,6 +10,7 @@ import UIKit
 
 public protocol PoliSelfOAuthClientStatusManagerDelegate {
     func onStatusUpdate(appStatus: PoliSelfOAuthClient.AccountStatus)
+    func onRestStatusUpdate(appStatus: PoliSelfOAuthClient.AccountStatus)
 }
 
 

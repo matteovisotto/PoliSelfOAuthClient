@@ -18,6 +18,7 @@ public class PoliSelfService {
         case orarioLezioni = "398"
         case esitiEsami = "661"
         case iscrizioneEsami = "1918"
+        case polimiApp = "2428"
     }
     
     static func getResponseType(from stringURL: String) -> PoliServiceOAuthLogin.AuthResponse {
@@ -87,7 +88,7 @@ public class PoliSelfService {
     }
     
     public func getServicePage(completionHandler: @escaping (_ result: Bool, _ url: URL?, _ htmlString: String?) -> ()) -> Void {
-        if self.service == .webeep || self.service == .orarioLezioni {
+        if self.service == .webeep || self.service == .orarioLezioni || self.service == .polimiApp {
             let poliOAuth = PoliServiceOAuthLogin(serviceId: self.service.rawValue, accessToken: self.accessToken)
             poliOAuth.executeFlow(completionHandler: completionHandler)
         } else {

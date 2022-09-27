@@ -11,13 +11,23 @@ public class PoliSelfOAuthClient {
     
     public static let shared: PoliSelfOAuthClient = PoliSelfOAuthClient()
     
+    private var isRestEnabled: Bool = false
+    
     private var currentStatus: PoliSelfOAuthClient.AccountStatus = .UNLOGGED
+    private var currentRestStatus: PoliSelfOAuthClient.AccountStatus = .UNLOGGED
     
     private var statusManager: PoliSelfOAuthClientStatusManager = PoliSelfOAuthClientStatusManager.shared
+    private var restStatusManager: PoliSelfOAuthClientRestStatusManager = PoliSelfOAuthClientRestStatusManager.shared
     
     public var accessToken: String? {
         get {
             return PoliSelfOAuthClientSharedPreferencesManager.getAccessToken()
+        }
+    }
+    
+    public var restAccessToken: String? {
+        get {
+            return PoliSelfOAuthClientSharedPreferencesManager.getRestAccessToken()
         }
     }
     
@@ -27,13 +37,32 @@ public class PoliSelfOAuthClient {
         }
     }
     
+    public var isRestUserLogged: Bool {
+        get {
+            return self.currentRestStatus == .TOKEN_VALID
+        }
+    }
+    
     init(){
         PoliSelfOAuthClientStatusManager.registerForStatus(statusManagerDelegate: self)
+        if(isRestEnabled){
+            PoliSelfOAuthClientRestStatusManager.registerForStatus(statusManagerDelegate: self)
+        }
     }
     
     public func poliSelfLogin(completionHandler: @escaping (_ result: Bool)->()) -> Void {
         let webLogin = PoliSelfOAuthLoginViewController(inNavigationController: false)
-        webLogin.onCompletion = completionHandler
+        webLogin.onCompletion = { result in
+            if result {
+                if self.isRestEnabled {
+                    self.restStatusManager.loginIntoRestService()
+                }
+            }
+            DispatchQueue.main.async {
+                completionHandler(result)
+            }
+            
+        }
         let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
         if var topController = keyWindow?.rootViewController {
             while let presentedViewController = topController.presentedViewController {
@@ -54,17 +83,37 @@ public class PoliSelfOAuthClient {
         }
     }
     
-    public func initialize() -> Void {
+    public func getRestService(restEndpointUrl: String, completionHandler: @escaping (_ result: Bool, _ jsonString: String?) -> () ) -> Void {
+        if(self.currentRestStatus == .TOKEN_VALID){
+            guard let accessToken = self.restAccessToken else {completionHandler(false, nil); return}
+            let restService = PoliSelfRestService(restEndpoint: restEndpointUrl, accessToken: accessToken)
+            restService.getJson(completionHandler: completionHandler)
+        } else {
+            completionHandler(false, nil)
+        }
+    }
+    
+    public func initialize(useRestService: Bool = false) -> Void {
+        self.isRestEnabled = useRestService
         self.statusManager.updateAppToken()
+        if useRestService {
+            self.restStatusManager.updateAppToken()
+        }
     }
     
     public func registerForStatusUpdate(_ observer: PoliSelfOAuthClientStatusManagerDelegate) -> Void {
         PoliSelfOAuthClientStatusManager.registerForStatus(statusManagerDelegate: observer)
+        if self.isRestEnabled{
+            PoliSelfOAuthClientRestStatusManager.registerForStatus(statusManagerDelegate: observer)
+        }
     }
+    
+    
     
     public func logout() -> Void {
         PoliSelfOAuthClientSharedPreferencesManager.deletePreferences()
         PoliSelfOAuthClientStatusManager.notifyStatusUpdate(status: .UNLOGGED)
+        PoliSelfOAuthClientRestStatusManager.notifyStatusUpdate(status: .UNLOGGED)
     }
     
     public func getPoliCookies() -> [HTTPCookie]? {
@@ -89,11 +138,16 @@ public class PoliSelfOAuthClient {
         }
     }
     
+    
 }
 
 extension PoliSelfOAuthClient: PoliSelfOAuthClientStatusManagerDelegate {
     public func onStatusUpdate(appStatus: AccountStatus) {
         self.currentStatus = appStatus
+    }
+    
+    public func onRestStatusUpdate(appStatus: AccountStatus) {
+        self.currentRestStatus = appStatus
     }
 }
 
